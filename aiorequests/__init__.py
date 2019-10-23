@@ -1,1 +1,1 @@
-from .aiorequests import BaseAsyncioClient, aiorequests
+from .aiorequests import AioRequests

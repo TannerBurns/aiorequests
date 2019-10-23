@@ -1,7 +1,7 @@
 import asyncio
 import os
 
-from typing import Callable
+from typing import Callable, List, Tuple
 
 import requests
 
@@ -56,40 +56,40 @@ class AioRequests(object):
     def head(self, *args, **kwargs):
         return self.session.head(*args, **kwargs)
   
-    async def _aio_executor(self, method: str, args: list):
+    async def _aio_executor(self, method: str, calls: List[Tuple[list, dict]]):
         if method.lower() == 'get':
             return [
-                await async_get(*a) 
-                for i in range(0, len(args), self.workers) 
-                for a in args[i:i+self.workers]
+                await self.async_get(*argtuple[0], **argtuple[1]) 
+                for index in range(0, len(calls), self.workers) 
+                for argtuple in calls[index:index+self.workers]
             ]
         elif method.lower() == 'post':
             return [
-                await async_post(*a) 
-                for i in range(0, len(args), self.workers) 
-                for a in args[i:i+self.workers]
+                await self.async_post(*argtuple[0], **argtuple[1]) 
+                for index in range(0, len(calls), self.workers)
+                for argtuple in calls[index:index+self.workers]
             ]
         elif method.lower() == 'put':
             return [
-                await async_put(*a) 
-                for i in range(0, len(args), self.workers) 
-                for a in args[i:i+self.workers]
+                await self.async_put(*argtuple[0], **argtuple[1]) 
+                for index in range(0, len(calls), self.workers) 
+                for argtuple in calls[index:index+self.workers]
             ]
         elif method.lower() == 'delete':
             return [
-                await async_delete(*a) 
-                for i in range(0, len(args), self.workers) 
-                for a in args[i:i+self.workers]
+                await self.async_delete(*argtuple[0], **argtuple[1]) 
+                for index in range(0, len(calls), self.workers) 
+                for argtuple in calls[index:index+self.workers]
             ]
         elif method.lower() == 'head':
             return [
-                await async_head(*a) 
-                for i in range(0, len(args), self.workers) 
-                for a in args[i:i+self.workers]
+                await self.async_head(*argtuple[0], **argtuple[1]) 
+                for index in range(0, len(calls), self.workers) 
+                for argtuple in calls[index:index+self.workers]
             ]
         else:
             raise Exception(f'Method "{method}" not supported. Choices: get, post, put, delete, head')
 
-    def bulk_request(self, method: str, args: list):
+    def bulk_request(self, method: str, calls: List[Tuple[list, dict]]):
         loop = asyncio.new_event_loop()
-        return loop.run_until_complete(self._aio_executor(method, args))
+        return loop.run_until_complete(self._aio_executor(method, calls))
