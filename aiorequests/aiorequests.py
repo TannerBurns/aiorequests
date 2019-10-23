@@ -40,21 +40,6 @@ class AioRequests(object):
 
     async def async_head(self, *args, **kwargs):
         return await self._execute(self.session.head, *args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        return self.session.get(*args, **kwargs)
-    
-    def post(self, *args, **kwargs):
-        return self.session.post(*args, **kwargs)
-
-    def put(self, *args, **kwargs):
-        return self.session.put(*args, **kwargs)
- 
-    def delete(self, *args, **kwargs):
-        return self.session.delete(*args, **kwargs)
-    
-    def head(self, *args, **kwargs):
-        return self.session.head(*args, **kwargs)
   
     async def _aio_executor(self, method: str, calls: List[Tuple[list, dict]]):
         if method.lower() == 'get':

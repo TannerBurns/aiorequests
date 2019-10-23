@@ -9,10 +9,10 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name= 'aiorequests',
-    version= '0.1.1',
+    version= '0.2.1',
     packages= find_packages(),
     include_package_data= True,
-    description= 'Async requests library built with asyncio and requests. Ability to create single and bulk request.',
+    description= 'Async requests library built with asyncio and requests. Ability to bulk async request.',
     long_description= README,
     url= 'https://www.github.com/tannerburns/aiorequests',
     author= 'Tanner Burns',
