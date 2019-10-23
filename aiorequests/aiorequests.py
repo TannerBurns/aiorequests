@@ -1,12 +1,14 @@
-import os
-import requests
 import asyncio
+import os
 
 from typing import Callable
 
-class BaseAsyncioClient(object):
+import requests
+
+
+class AioRequests(object):
     def __init__(self, workers: int= 16, *args: list, **kwargs: dict):
-        self.num_workers = workers
+        self.workers = workers
         self.session = requests.Session()
         rqAdapters = requests.adapters.HTTPAdapter(
             pool_connections = workers, 
@@ -39,64 +41,51 @@ class BaseAsyncioClient(object):
     async def async_head(self, *args, **kwargs):
         return await self._execute(self.session.head, *args, **kwargs)
 
-
-class aiorequests(BaseAsyncioClient):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    async def _run(self, fn: Callable, *args, **kwargs):
-        return await fn(*args, **kwargs)
-
     def get(self, *args, **kwargs):
-        loop = asyncio.new_event_loop()
-        return loop.run_until_complete(self._run(self.async_get, *args, **kwargs))
+        return self.session.get(*args, **kwargs)
     
     def post(self, *args, **kwargs):
-        loop = asyncio.new_event_loop()
-        return loop.run_until_complete(self._run(self.async_post, *args, **kwargs))
+        return self.session.post(*args, **kwargs)
 
     def put(self, *args, **kwargs):
-        loop = asyncio.new_event_loop()
-        return loop.run_until_complete(self._run(self.async_put, *args, **kwargs))
+        return self.session.put(*args, **kwargs)
  
     def delete(self, *args, **kwargs):
-        loop = asyncio.new_event_loop()
-        return loop.run_until_complete(self._run(self.async_delete, *args, **kwargs))
+        return self.session.delete(*args, **kwargs)
     
     def head(self, *args, **kwargs):
-        loop = asyncio.new_event_loop()
-        return loop.run_until_complete(self._run(self.async_head, *args, **kwargs))
+        return self.session.head(*args, **kwargs)
   
     async def _aio_executor(self, method: str, args: list):
         if method.lower() == 'get':
             return [
                 await async_get(*a) 
-                for i in range(0, len(args), self.num_workers) 
-                for a in args[i:i+self.num_workers]
+                for i in range(0, len(args), self.workers) 
+                for a in args[i:i+self.workers]
             ]
         elif method.lower() == 'post':
             return [
                 await async_post(*a) 
-                for i in range(0, len(args), self.num_workers) 
-                for a in args[i:i+self.num_workers]
+                for i in range(0, len(args), self.workers) 
+                for a in args[i:i+self.workers]
             ]
         elif method.lower() == 'put':
             return [
                 await async_put(*a) 
-                for i in range(0, len(args), self.num_workers) 
-                for a in args[i:i+self.num_workers]
+                for i in range(0, len(args), self.workers) 
+                for a in args[i:i+self.workers]
             ]
         elif method.lower() == 'delete':
             return [
                 await async_delete(*a) 
-                for i in range(0, len(args), self.num_workers) 
-                for a in args[i:i+self.num_workers]
+                for i in range(0, len(args), self.workers) 
+                for a in args[i:i+self.workers]
             ]
         elif method.lower() == 'head':
             return [
                 await async_head(*a) 
-                for i in range(0, len(args), self.num_workers) 
-                for a in args[i:i+self.num_workers]
+                for i in range(0, len(args), self.workers) 
+                for a in args[i:i+self.workers]
             ]
         else:
             raise Exception(f'Method "{method}" not supported. Choices: get, post, put, delete, head')
