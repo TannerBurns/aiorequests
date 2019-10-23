@@ -2,7 +2,7 @@
 
 ![Python3.7 badge](https://img.shields.io/badge/python-v3.7-blue)
 
-    Async requests library built with asyncio and requests. Ability to create single and bulk request.
+    Async requests library built with asyncio and requests. Ability to bulk async request.
 
 
 # Example
