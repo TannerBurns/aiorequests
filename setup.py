@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name= 'aiorequests',
-    version= '0.2.1',
+    version= '0.2.6',
     packages= find_packages(),
     include_package_data= True,
     description= 'Async requests library built with asyncio and requests. Ability to bulk async request.',
